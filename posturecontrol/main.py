@@ -28,10 +28,10 @@ logging.basicConfig(
 try:
     if sys.platform == "darwin":
         _log_dir = os.path.join(
-            os.path.expanduser("~"), "Library", "Logs", "BatesPosture"
+            os.path.expanduser("~"), "Library", "Logs", "PostureControl"
         )
     else:
-        _log_dir = os.path.join(os.path.expanduser("~"), ".batesposture_logs")
+        _log_dir = os.path.join(os.path.expanduser("~"), ".posturecontrol_logs")
     os.makedirs(_log_dir, exist_ok=True)
     _file_handler = logging.handlers.RotatingFileHandler(
         os.path.join(_log_dir, "app.log"),
@@ -57,14 +57,14 @@ def _process_looks_like_batesposture(pid: int) -> bool:
         cmdline = " ".join(process.cmdline()).lower()
     except (psutil.AccessDenied, psutil.ZombieProcess):
         cmdline = ""
-    if "batesposture" in cmdline:
+    if "posturecontrol" in cmdline:
         return True
 
     try:
         name = process.name().lower()
     except (psutil.AccessDenied, psutil.ZombieProcess):
         name = ""
-    return "batesposture" in name
+    return "posturecontrol" in name
 
 
 def _acquire_single_instance_lock(lock_file: str) -> QLockFile | None:
@@ -101,7 +101,7 @@ def main() -> None:
     app = QApplication(sys.argv)
     app.setApplicationName("BatesPosture")
 
-    lock_file = os.path.join(get_app_data_dir(), "batesposture.lock")
+    lock_file = os.path.join(get_app_data_dir(), "posturecontrol.lock")
     lock = _acquire_single_instance_lock(lock_file)
     if lock is None:
         sys.exit(0)

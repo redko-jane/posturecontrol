@@ -10,12 +10,6 @@ from .settings_service import SettingsService
 
 
 class ScoreService:
-    """Thread-safe rolling buffer for posture scores with session statistics and streak tracking.
-
-    All public methods acquire a threading.Lock before reading or mutating internal state,
-    making it safe to call add_score() from the camera thread while average() and
-    session_stats() are read from the Qt main thread.
-    """
 
     def __init__(self, settings: SettingsService) -> None:
         ml_settings = settings.ml

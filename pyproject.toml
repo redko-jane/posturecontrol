@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "batesposture"
+name = "posturecontrol"
 version = "1.1.2"
 description = "Discreet system-tray posture monitor powered by MediaPipe and OpenCV."
 readme = "README.md"
@@ -27,7 +27,7 @@ dependencies = [
 ]
 
 [project.scripts]
-batesposture = "batesposture.main:main"
+posturecontrol = "posturecontrol.main:main"
 
 [project.urls]
 Homepage = "https://posture.palanbates.com"
@@ -35,7 +35,7 @@ Repository = "https://github.com/wtbates99/batesposture"
 "Bug Tracker" = "https://github.com/wtbates99/batesposture/issues"
 
 [tool.hatch.build.targets.wheel]
-packages = ["batesposture"]
+packages = ["posturecontrol"]
 
 [dependency-groups]
 dev = [
@@ -49,7 +49,7 @@ filterwarnings = [
     "ignore:Type google._upb._message.*:DeprecationWarning",
 ]
 
-# Run the app:   uv run batesposture  (after pip install -e .)
-#            or: uv run python -m batesposture
+# Run the app:   uv run posturecontrol  (after pip install -e .)
+#            or: uv run python -m posturecontrol
 # Run tests:     uv run --group dev python -m pytest
 # Install deps:  uv sync --all-groups

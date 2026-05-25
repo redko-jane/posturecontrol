@@ -8,12 +8,6 @@ from .settings_service import SettingsService
 
 
 class NotificationService:
-    """Sends desktop notifications for posture alerts and tracking status changes.
-
-    Respects ``notifications_enabled`` and ``focus_mode_enabled`` runtime settings.
-    Implements a cooldown (``notification_cooldown`` seconds, default 300) to prevent
-    repeated alerts during sustained poor posture.
-    """
 
     TREND_DROP_POINTS: float = 12.0
 
@@ -47,7 +41,6 @@ class NotificationService:
 
     def maybe_notify_trend(self, score_service) -> None:
         """Nudge the user when rolling posture has declined meaningfully.
-
         Catches gradual slumps that never cross the absolute threshold. Uses an
         independent cooldown from the threshold alert so the two don't interfere.
         """

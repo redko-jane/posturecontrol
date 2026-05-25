@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import inspect
 
-import batesposture
+import posturecontrol
 from .. import main as main_module
 
 
 def test_package_imports_mediapipe_compat():
-    source = inspect.getsource(batesposture)
+    source = inspect.getsource(posturecontrol)
 
     assert "from .ml import mediapipe_compat" in source
 
