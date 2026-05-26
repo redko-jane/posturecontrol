@@ -76,8 +76,8 @@ jobs:
           QT_QPA_PLATFORM: offscreen
         run: |
           uv run python -c "import mediapipe as mp; assert mp.__version__ == '0.10.21'; print(f'mediapipe {mp.__version__}')"
-          uv run python -c "import batesposture.main; print('batesposture.main OK')"
-          uv run python -c "from batesposture.services.settings_service import ResourceSettings; path = ResourceSettings().icon_path.lower(); import os; assert path.endswith('.ico' if os.name == 'nt' else '.png'); print(path)"
+          uv run python -c "import posturecontrol.main; print('posturecontrol.main OK')"
+          uv run python -c "from posturecontrol.services.settings_service import ResourceSettings; path = ResourceSettings().icon_path.lower(); import os; assert path.endswith('.ico' if os.name == 'nt' else '.png'); print(path)"
 
       - name: Run full regression test suite
         env:

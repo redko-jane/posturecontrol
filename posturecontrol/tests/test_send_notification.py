@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from batesposture.util__send_notification import _plyer_notification_kwargs
+from posturecontrol.util__send_notification import _plyer_notification_kwargs
 
 
 def test_plyer_notification_kwargs_include_existing_ico(tmp_path):

@@ -30,7 +30,7 @@ from PyQt6.QtCore import QSettings, QStandardPaths
 
 
 SETTINGS_SCHEMA_VERSION = "1.1.0"
-SETTINGS_ORGANIZATION = "BatesPosture"
+SETTINGS_ORGANIZATION = "PostureControl"
 SETTINGS_APPLICATION = "PostureApp"
 ENV_PREFIX = "POSTURE"
 
@@ -61,7 +61,7 @@ def get_resource_path(relative_path: str) -> str:
         pyinstaller_root = Path(base_path)
         candidates.append(pyinstaller_root / relative)
         # strip leading package name if present (e.g. "batesposture/static/…")
-        if relative.parts and relative.parts[0] == "batesposture":
+        if relative.parts and relative.parts[0] == "posturecontrol":
             candidates.append(pyinstaller_root / Path(*relative.parts[1:]))
 
     # Normal install: __file__ is …/batesposture/services/settings_service.py
@@ -70,7 +70,7 @@ def get_resource_path(relative_path: str) -> str:
 
     for root in (project_root, pkg_root):
         candidates.append(root / relative)
-        if relative.parts and relative.parts[0] == "batesposture":
+        if relative.parts and relative.parts[0] == "postureconrol":
             candidates.append(root / Path(*relative.parts[1:]))
 
     for candidate in candidates:
@@ -136,7 +136,7 @@ def _default_posture_weights() -> List[float]:
 
 def _default_icon_path() -> str:
     icon_name = "icon.ico" if os.name == "nt" else "icon.png"
-    return get_resource_path(f"batesposture/static/{icon_name}")
+    return get_resource_path(f"posturecontrol/static/{icon_name}")
 
 
 @dataclass(frozen=True)

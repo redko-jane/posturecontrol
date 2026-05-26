@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import inspect
 
-from batesposture.services import settings_service
+from posturecontrol.services import settings_service
 
 
 def test_settings_imports_mediapipe_compat_before_pyqt6():
