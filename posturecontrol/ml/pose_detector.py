@@ -284,9 +284,9 @@ class PoseDetector:
         )
         cv2.putText(
             frame,
-            f"Posture Score: {score:.1f}%",
+            f"Оценка осанки: {score:.1f}%",
             (10, 30),
-            cv2.FONT_HERSHEY_SIMPLEX,
+            cv2.FONT_HERSHEY_COMPLEX,
             1,
             score_color,
             2,
@@ -296,7 +296,7 @@ class PoseDetector:
                 frame,
                 runtime.default_posture_message,
                 (10, 60),
-                cv2.FONT_HERSHEY_SIMPLEX,
+                cv2.FONT_HERSHEY_COMPLEX,
                 0.7,
                 (0, 0, 255),
                 2,

@@ -93,13 +93,13 @@ class PostureTrackerTray(QSystemTrayIcon):
 
     def _initialize_application(self) -> None:
         app = QApplication.instance()
-        app.setApplicationName("BatesPosture")
+        app.setApplicationName("PostureControl")
         icon_path = self._settings.resources.icon_path
         self.icon_path = icon_path
         icon = QIcon(icon_path)
         app.setWindowIcon(icon)
         self.setIcon(icon)
-        self.setToolTip("BatesPosture — idle")
+        self.setToolTip("PostureControl — idle")
 
     def _run_onboarding_if_needed(self) -> None:
         if run_onboarding_if_needed(self._settings):
@@ -111,7 +111,7 @@ class PostureTrackerTray(QSystemTrayIcon):
 
         self.toggle_tracking_action = QAction(
             style.standardIcon(QStyle.StandardPixmap.SP_MediaPlay),
-            "Start Tracking",
+            "Начать отслеживание",
             self,
         )
         self.toggle_tracking_action.setShortcut("Ctrl+Shift+T")
@@ -120,7 +120,7 @@ class PostureTrackerTray(QSystemTrayIcon):
 
         self.toggle_dashboard_action = QAction(
             style.standardIcon(QStyle.StandardPixmap.SP_DesktopIcon),
-            "Show Dashboard",
+            "Показать панель",
             self,
         )
         self.toggle_dashboard_action.setShortcut("Ctrl+Shift+D")
@@ -139,10 +139,10 @@ class PostureTrackerTray(QSystemTrayIcon):
         self.interval_menu_action = menu.addMenu(self.interval_menu)
 
         runtime = self._settings.runtime
-        menu.addSection("Quick toggles")
+        menu.addSection("Быстрые переключатели")
         self.notifications_toggle_action = QAction(
             style.standardIcon(QStyle.StandardPixmap.SP_MessageBoxInformation),
-            "Notifications",
+            "Уведомления",
             self,
             checkable=True,
         )
@@ -152,7 +152,7 @@ class PostureTrackerTray(QSystemTrayIcon):
 
         self.logging_toggle_action = QAction(
             style.standardIcon(QStyle.StandardPixmap.SP_DriveHDIcon),
-            "Database Logging",
+            "Логирование в БД",
             self,
             checkable=True,
         )
@@ -162,7 +162,7 @@ class PostureTrackerTray(QSystemTrayIcon):
 
         self.focus_mode_action = QAction(
             style.standardIcon(QStyle.StandardPixmap.SP_DialogNoButton),
-            "Focus Mode",
+            "Режим фокуса",
             self,
             checkable=True,
         )
@@ -178,7 +178,7 @@ class PostureTrackerTray(QSystemTrayIcon):
 
         self.settings_action = QAction(
             style.standardIcon(QStyle.StandardPixmap.SP_FileDialogDetailedView),
-            "Settings",
+            "Настройки",
             menu,
         )
         self.settings_action.setShortcut("Ctrl+,")
@@ -189,7 +189,7 @@ class PostureTrackerTray(QSystemTrayIcon):
         # Export action (enabled when DB logging is on)
         self.export_action = QAction(
             style.standardIcon(QStyle.StandardPixmap.SP_DialogSaveButton),
-            "Export Data as CSV…",
+            "Экспорт данных в CSV…",
             menu,
         )
         self.export_action.triggered.connect(self._export_csv)
@@ -199,7 +199,7 @@ class PostureTrackerTray(QSystemTrayIcon):
         menu.addSeparator()
         quit_action = QAction(
             style.standardIcon(QStyle.StandardPixmap.SP_TitleBarCloseButton),
-            "Quit",
+            "Выход",
             menu,
             triggered=self.quit_application,
         )
@@ -211,7 +211,7 @@ class PostureTrackerTray(QSystemTrayIcon):
         self.setVisible(True)
 
     def _create_interval_menu(self, parent_menu: QMenu) -> QMenu:
-        interval_menu = QMenu("Tracking Interval", parent_menu)
+        interval_menu = QMenu("Интервал отслеживания", parent_menu)
         interval_group = QActionGroup(interval_menu)
         interval_group.setExclusive(True)
 
@@ -224,7 +224,7 @@ class PostureTrackerTray(QSystemTrayIcon):
             action.triggered.connect(lambda checked, m=minutes: self.set_interval(m))
             if minutes == 0:
                 action.setToolTip(
-                    "Camera stays on continuously — higher CPU and battery use."
+                    "Камера работает постоянно — повышенное потребление CPU и батареи."
                 )
             interval_menu.addAction(action)
             interval_group.addAction(action)
@@ -330,7 +330,7 @@ class PostureTrackerTray(QSystemTrayIcon):
         self._absence_started_at = None
         self._continuous_tracking_start = datetime.now()
         self._break_reminder_sent = False
-        self.toggle_tracking_action.setText("Stop Tracking")
+        self.toggle_tracking_action.setText("Остановить отслеживание")
         self.toggle_dashboard_action.setEnabled(True)
         self.setIcon(create_score_icon(0))
         logger.info("Tracking started")
@@ -349,7 +349,7 @@ class PostureTrackerTray(QSystemTrayIcon):
             self.video_window.close()
             self.video_window = None
         self.setIcon(QIcon(self.icon_path))
-        self.setToolTip("BatesPosture — idle")
+        self.setToolTip("PostureControl — idle")
         logger.info("Tracking stopped")
 
     def toggle_dashboard(self) -> None:
@@ -374,7 +374,7 @@ class PostureTrackerTray(QSystemTrayIcon):
             self.video_window.destroyed.connect(self._on_dashboard_closed)
             self.video_window.resize(720, 560)
             self.video_window.show()
-            self.toggle_dashboard_action.setText("Hide Dashboard")
+            self.toggle_dashboard_action.setText("Скрыть панель")
 
     def _on_dashboard_closed(self) -> None:
         if self._database and isinstance(self.video_window, PostureDashboard):
@@ -440,7 +440,7 @@ class PostureTrackerTray(QSystemTrayIcon):
             self._pause_tracking_for_absence()
 
         if self._tracking_paused_for_absence:
-            self.setToolTip("Away from desk — tracking paused")
+            self.setToolTip("Отошли от компьютера — отслеживание приостановлено")
             self.setIcon(QIcon(self.icon_path))
 
         if isinstance(self.video_window, PostureDashboard):
@@ -465,12 +465,12 @@ class PostureTrackerTray(QSystemTrayIcon):
     def _update_tooltip(self, average_score: float) -> None:
         grade = score_grade(average_score)
         streak_s = self._scores.current_streak_s
-        parts = [f"Posture: {average_score:.0f}% ({grade})"]
+        parts = [f"Осанка: {average_score:.0f}% ({grade})"]
         if streak_s >= 60:
             minutes = int(streak_s) // 60
-            parts.append(f"🔥 {minutes}m good posture streak")
+            parts.append(f"🔥 {minutes} мин хорошей осанки")
         elif streak_s >= 10:
-            parts.append(f"Streak: {int(streak_s)}s")
+            parts.append(f"Серия: {int(streak_s)}s")
         self.setToolTip(" | ".join(parts))
 
     def _maybe_send_break_reminder(self) -> None:
@@ -479,7 +479,7 @@ class PostureTrackerTray(QSystemTrayIcon):
         elapsed = datetime.now() - self._continuous_tracking_start
         if elapsed >= timedelta(minutes=_BREAK_REMINDER_MINUTES):
             self._notifications.notify_interval_change(
-                f"You've been sitting for {_BREAK_REMINDER_MINUTES} minutes — stand up and stretch!"
+                f"Вы сидите уже {_BREAK_REMINDER_MINUTES} минут — встаньте и разомнитесь!"
             )
             self._break_reminder_sent = True
 
@@ -490,12 +490,12 @@ class PostureTrackerTray(QSystemTrayIcon):
         self.tracking_interval = minutes
         if minutes == 0:
             self._notifications.notify_interval_change(
-                "Continuous tracking enabled — camera stays on."
+                "Непрерывное отслеживание включено — камера остаётся активной."
             )
         else:
             duration = self._settings.runtime.tracking_duration_minutes
             self._notifications.notify_interval_change(
-                f"Scanning for {duration} min every {minutes} min"
+                f"Сканирование {duration} мин каждые {minutes} мин"
             )
         self.last_tracking_time = None if minutes > 0 else self.last_tracking_time
         if minutes == 0 and not self.tracking_enabled:
@@ -519,7 +519,7 @@ class PostureTrackerTray(QSystemTrayIcon):
         elif not self.tracking_enabled:
             mins = int(remaining_s // 60)
             secs = int(remaining_s % 60)
-            self.setToolTip(f"Next scan in {mins}:{secs:02d}")
+            self.setToolTip(f"Следующее сканирование через {mins}:{secs:02d}")
 
     def _start_interval_tracking(self) -> None:
         self.last_tracking_time = datetime.now()
@@ -565,18 +565,18 @@ class PostureTrackerTray(QSystemTrayIcon):
             QMessageBox.information(
                 None,
                 "Export",
-                "Enable database logging first to collect data for export.",
+                "Сначала включите логирование в БД, чтобы собирать данные для экспорта.",
             )
             return
         path = self._database.export_scores_csv()
         if path:
             QMessageBox.information(
                 None,
-                "Export complete",
-                f"Data exported to:\n{path}",
+                "Экспорт завершён",
+                f"Данные экспортированы в:\n{path}",
             )
         else:
-            QMessageBox.warning(None, "Export failed", "Could not write CSV file.")
+            QMessageBox.warning(None, "Ошибка экспорта", "Не удалось записать CSV-файл.")
 
     # ------------------------
     # Menu callbacks
@@ -598,15 +598,15 @@ class PostureTrackerTray(QSystemTrayIcon):
         self._set_focus_label(checked)
 
     def _set_notification_label(self, enabled: bool) -> None:
-        label = "Notifications (On)" if enabled else "Notifications (Off)"
+        label = "Уведомления (вкл)" if enabled else "Уведомления (выкл)"
         self.notifications_toggle_action.setText(label)
 
     def _set_logging_label(self, enabled: bool) -> None:
-        label = "Database Logging (On)" if enabled else "Database Logging (Off)"
+        label = "Логирование БД (вкл)" if enabled else "Логирование БД (выкл)"
         self.logging_toggle_action.setText(label)
 
     def _set_focus_label(self, enabled: bool) -> None:
-        label = "Focus Mode (On)" if enabled else "Focus Mode (Off)"
+        label = "Режим фокуса (вкл)" if enabled else "Режим фокуса (выкл)"
         self.focus_mode_action.setText(label)
 
     def open_settings(self) -> None:

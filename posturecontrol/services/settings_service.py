@@ -112,11 +112,11 @@ def _default_tracking_intervals() -> Dict[str, int]:
     # "Continuous (always on)" maps to 0 (special value meaning no scheduled stop).
     # Placed last so periodic options appear first and are the obvious choices.
     return {
-        "Every 5 minutes": 5,
-        "Every 15 minutes": 15,
-        "Every 30 minutes": 30,
-        "Every hour": 60,
-        "Continuous (always on)": 0,
+        "Каждые 5 минут": 5,
+        "Каждые 15 минут": 15,
+        "Каждые 30 минут": 30,
+        "Каждый час": 60,
+        "Непрерывно (всегда включено)": 0,
     }
 
 
@@ -155,7 +155,7 @@ class RuntimeSettings:
     frame_height: int = 720
     notification_cooldown: int = 300
     poor_posture_threshold: int = POOR_POSTURE_THRESHOLD_DEFAULT
-    default_posture_message: str = "Please sit up straight!"
+    default_posture_message: str = "Пожалуйста, выпрямитесь!"
     tracking_intervals: Dict[str, int] = field(
         default_factory=_default_tracking_intervals
     )

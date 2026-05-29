@@ -20,7 +20,7 @@ class NotificationService:
     def notify_interval_change(self, message: str) -> None:
         runtime = self._settings.runtime
         if message and runtime.notifications_enabled and not runtime.focus_mode_enabled:
-            send_notification(message, "Tracking Interval Changed", self._icon_path)
+            send_notification(message, "Интервал отслеживания изменен", self._icon_path)
 
     def maybe_notify_posture(self, posture_score: float) -> None:
         runtime = self._settings.runtime
@@ -34,7 +34,7 @@ class NotificationService:
             ):
                 send_notification(
                     runtime.default_posture_message,
-                    "Posture Alert!",
+                    "Внимание, осанка!",
                     self._icon_path,
                 )
                 self._last_notification_time = current_time
@@ -57,8 +57,8 @@ class NotificationService:
         ):
             return
         send_notification(
-            f"Your posture has slipped {decline:.0f} points — time to reset.",
-            "Posture Trending Down",
+            f"Ваша осанка ухудшилась на {decline:.0f} баллов — пора исправляться.",
+            "Осанка ухудшается",
             self._icon_path,
         )
         self._last_trend_notification_time = current_time

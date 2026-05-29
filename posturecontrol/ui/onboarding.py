@@ -39,7 +39,7 @@ class CalibrationResult:
 class CameraPreviewWidget(QLabel):
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
-        self.setText(self.tr("Camera preview will appear here"))
+        self.setText(self.tr("Здесь появится предпросмотр камеры"))
         self.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self._camera_id = 0
         self._timer = QTimer(self)
@@ -53,7 +53,7 @@ class CameraPreviewWidget(QLabel):
         if not capture.isOpened() and sys.platform == "darwin":
             capture = cv2.VideoCapture(self._camera_id, cv2.CAP_AVFOUNDATION)
         if not capture or not capture.isOpened():
-            self.setText(self.tr("Unable to open camera"))
+            self.setText(self.tr("Не удаётся открыть камеру"))
             return
         self._capture = capture
         self._timer.start(40)
@@ -71,7 +71,7 @@ class CameraPreviewWidget(QLabel):
             return
         ret, frame = self._capture.read()
         if not ret:
-            self.setText(self.tr("Camera feed unavailable"))
+            self.setText(self.tr("Поток с камеры недоступен"))
             return
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         h, w, ch = frame.shape
@@ -142,7 +142,7 @@ class CalibrationWorker(QObject):
             if not capture or not capture.isOpened():
                 self.failed.emit(
                     QApplication.translate(
-                        "CalibrationWorker", "Unable to access camera"
+                        "CalibrationWorker", "Нет доступа к камере"
                     )
                 )
                 return
@@ -183,13 +183,13 @@ class CalibrationWorker(QObject):
 
         if self._stop:
             self.failed.emit(
-                QApplication.translate("CalibrationWorker", "Calibration cancelled")
+                QApplication.translate("CalibrationWorker", "Калибровка отменена")
             )
             return
 
         if not collected["posture_score"]:
             self.failed.emit(
-                QApplication.translate("CalibrationWorker", "No posture data captured")
+                QApplication.translate("CalibrationWorker", "Данные об осанке не получены")
             )
             return
 
@@ -212,14 +212,14 @@ class WelcomePage(QWizardPage):
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
-        self.setTitle(self.tr("Welcome to Posture Coach"))
+        self.setTitle(self.tr("Добро пожаловать в PostureControl"))
         self.setSubTitle(
-            self.tr("We will calibrate your experience in three quick steps.")
+            self.tr("Мы настроим ваш опыт за три быстрых шага.")
         )
 
         hero = QLabel(
             self.tr(
-                "Great posture starts with awareness. We'll help you dial in camera framing, learn posture cues, and capture your personal baseline so reminders feel tailored."
+                "Хорошая осанка начинается с осознанности. Мы поможем вам настроить кадрирование камеры, изучить признаки правильной осанки и записать ваши личные базовые показатели, чтобы напоминания были персонализированными."
             )
         )
         hero.setWordWrap(True)
@@ -230,9 +230,9 @@ class WelcomePage(QWizardPage):
 
         tips = QLabel(
             self.tr(
-                "- Find a well-lit space\n"
-                "- Position your camera at eye level\n"
-                "- Sit naturally - no need to pose!"
+                "- Найдите хорошо освещённое место\n"
+                "- Расположите камеру на уровне глаз\n"
+                "- Сидите естественно — не нужно позировать!"
             )
         )
         tips.setWordWrap(True)
@@ -257,9 +257,9 @@ class CameraSetupPage(QWizardPage):
     ) -> None:
         super().__init__(parent)
         self._settings = settings
-        self.setTitle(self.tr("Align your camera"))
+        self.setTitle(self.tr("Настройте камеру"))
         self.setSubTitle(
-            self.tr("Center yourself and ensure your upper body is in frame.")
+            self.tr("Расположитесь по центру, чтобы верхняя часть тела была в кадре.")
         )
 
         self.preview = CameraPreviewWidget()
@@ -267,7 +267,7 @@ class CameraSetupPage(QWizardPage):
 
         guidance = QLabel(
             self.tr(
-                "Adjust your seating so your head and shoulders are visible. Use natural lighting when possible."
+                "Отрегулируйте положение, чтобы голова и плечи были видны. По возможности используйте естественное освещение."
             )
         )
         guidance.setWordWrap(True)
@@ -303,16 +303,16 @@ class CalibrationPage(QWizardPage):
     ) -> None:
         super().__init__(parent)
         self._settings = settings
-        self.setTitle(self.tr("Capture your baseline"))
+        self.setTitle(self.tr("Запишите базовые показатели"))
         self.setSubTitle(
             self.tr(
-                "We'll measure a short sample so posture insights match your neutral stance."
+                "Мы сделаем короткий замер, чтобы анализировать осанку относительно вашего естественного положения."
             )
         )
 
         self.status_label = QLabel(
             self.tr(
-                'When you\'re ready, sit comfortably and press "Start calibration".'
+                'Когда будете готовы, сядьте удобно и нажмите "Начать калибровку".'
             )
         )
         self.status_label.setWordWrap(True)
@@ -320,7 +320,7 @@ class CalibrationPage(QWizardPage):
         self.results_label = QLabel("")
         self.results_label.setWordWrap(True)
 
-        self.start_button = QPushButton(self.tr("Start calibration"))
+        self.start_button = QPushButton(self.tr("Начать калибровку"))
         self.start_button.clicked.connect(self._begin_calibration)
 
         layout = QVBoxLayout()
@@ -342,7 +342,7 @@ class CalibrationPage(QWizardPage):
             return
         self.start_button.setEnabled(False)
         self.status_label.setText(
-            self.tr("Collecting data... Keep still for six seconds.")
+            self.tr("Сбор данных... Сохраняйте неподвижность шесть секунд.")
         )
 
         worker = CalibrationWorker(self._settings)
@@ -372,12 +372,12 @@ class CalibrationPage(QWizardPage):
     def _handle_success(self, result: CalibrationResult) -> None:
         self._metrics = result
         self.start_button.setEnabled(True)
-        self.status_label.setText(self.tr("Baseline captured."))
+        self.status_label.setText(self.tr("Базовые показатели записаны."))
         self.results_label.setText(
             self.tr(
-                "- Average posture score: {score:.1f}%\n"
-                "- Neck angle: {neck:.1f} deg\n"
-                "- Shoulder balance delta: {delta:.3f}"
+                "- Средняя оценка осанки: {score:.1f}%\n"
+                "- Угол шеи: {neck:.1f} deg\n"
+                "- Дельта баланса плеч: {delta:.3f}"
             ).format(
                 score=result.posture_score,
                 neck=result.neck_angle,
@@ -389,7 +389,7 @@ class CalibrationPage(QWizardPage):
 
     def _handle_failure(self, message: str) -> None:
         self.start_button.setEnabled(True)
-        self.status_label.setText(self.tr("Calibration failed"))
+        self.status_label.setText(self.tr("Калибровка не удалась"))
         QMessageBox.warning(self, self.tr("Calibration"), message)
         self._cleanup_worker()
 
@@ -431,7 +431,7 @@ class OnboardingWizard(QWizard):
     ) -> None:
         super().__init__(parent)
         self._settings = settings_service
-        self.setWindowTitle(self.tr("Posture Coach Setup"))
+        self.setWindowTitle(self.tr("Настройка PostureControl"))
         self.setOption(QWizard.WizardOption.IndependentPages, False)
         self.setWizardStyle(QWizard.WizardStyle.ModernStyle)
         self.setMinimumWidth(500)

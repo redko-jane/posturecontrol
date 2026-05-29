@@ -43,12 +43,12 @@ def _score_color(score: float) -> QColor:
 
 def score_grade(score: float) -> str:
     if score >= 85:
-        return "Excellent"
+        return "Отлично"
     if score >= 70:
-        return "Good"
+        return "Хорошо"
     if score >= 55:
-        return "Fair"
-    return "Poor"
+        return "Удовлетворительно"
+    return "Плохо"
 
 
 def _format_duration(seconds: float) -> str:
@@ -165,7 +165,7 @@ class PostureDashboard(QDialog):
         parent: Optional[QWidget] = None,
     ) -> None:
         super().__init__(parent)
-        self.setWindowTitle("Posture Dashboard")
+        self.setWindowTitle("Панель осанки")
         self.recent_scores: deque[float] = deque(maxlen=120)
         if history:
             self.recent_scores.extend(history)
@@ -182,7 +182,7 @@ class PostureDashboard(QDialog):
         card_layout.setSpacing(12)
 
         # Video feed
-        self.video_label = QLabel(self.tr("Waiting for frames…"))
+        self.video_label = QLabel(self.tr("Ожидание кадров…"))
         self.video_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.video_label.setMinimumSize(560, 320)
         self.video_label.setSizePolicy(
@@ -197,12 +197,12 @@ class PostureDashboard(QDialog):
         stats_layout = QHBoxLayout(stats_row)
         stats_layout.setContentsMargins(0, 0, 0, 0)
         stats_layout.setSpacing(6)
-        self._stat_current = _StatLabel(self.tr("Current"))
-        self._stat_avg = _StatLabel(self.tr("Session Avg"))
-        self._stat_min = _StatLabel(self.tr("Session Min"))
-        self._stat_max = _StatLabel(self.tr("Session Max"))
-        self._stat_streak = _StatLabel(self.tr("Best Streak"))
-        self._stat_duration = _StatLabel(self.tr("Duration"))
+        self._stat_current = _StatLabel(self.tr("Текущая"))
+        self._stat_avg = _StatLabel(self.tr("Средняя за сессию"))
+        self._stat_min = _StatLabel(self.tr("Минимум за сессию"))
+        self._stat_max = _StatLabel(self.tr("Максимум за сессию"))
+        self._stat_streak = _StatLabel(self.tr("Лучшая серия"))
+        self._stat_duration = _StatLabel(self.tr("Длительность"))
         for stat in (
             self._stat_current,
             self._stat_avg,
@@ -215,7 +215,7 @@ class PostureDashboard(QDialog):
 
         # Coaching / alert text
         self.feedback_label = QLabel(
-            self.tr("Settle into a neutral posture while we gather readings.")
+            self.tr("Примите нейтральную позу, пока мы собираем данные.")
         )
         self.feedback_label.setWordWrap(True)
 
@@ -349,7 +349,7 @@ class PostureDashboard(QDialog):
     ) -> None:
         if score >= max(self.baseline_score - 5, 70):
             message = self.tr(
-                "Nice alignment! Keep a relaxed breath and soft shoulders."
+                "Хорошее положение! Дышите спокойно, плечи расслаблены."
             )
         else:
             cues: List[str] = []
@@ -358,16 +358,16 @@ class PostureDashboard(QDialog):
                 shoulder_threshold = self.baseline_shoulder_level + 0.02
                 if metrics.get("neck_angle", 0.0) > neck_threshold:
                     cues.append(
-                        self.tr("Gently draw your head back over your shoulders.")
+                        self.tr("Аккуратно отведите голову назад, над плечами.")
                     )
                 if metrics.get("shoulder_vertical_delta", 0.0) > shoulder_threshold:
-                    cues.append(self.tr("Level your shoulders to center your posture."))
+                    cues.append(self.tr("Выровняйте плечи, чтобы центрировать осанку."))
                 if metrics.get("spine_angle", 0.0) > 10.0:
-                    cues.append(self.tr("Lengthen through your spine and sit tall."))
+                    cues.append(self.tr("Вытяните позвоночник и сядьте ровно."))
             if not cues:
                 cues.append(
                     self.tr(
-                        "Reset by rolling your shoulders back and opening your chest."
+                        "Сбросьте напряжение: отведите плечи назад и раскройте грудную клетку."
                     )
                 )
             message = " ".join(cues[:2])
