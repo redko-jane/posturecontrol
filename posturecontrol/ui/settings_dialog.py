@@ -285,7 +285,7 @@ class SettingsDialog(QDialog):
         self.section_list.currentRowChanged.connect(self.section_stack.setCurrentIndex)
         self.section_list.setCurrentRow(0)
 
-        self.show_advanced_checkbox = QCheckBox("Show Advanced")
+        self.show_advanced_checkbox = QCheckBox("Показать расширенные")
         self.show_advanced_checkbox.setObjectName("advancedToggle")
         self.show_advanced_checkbox.setChecked(False)
         self.show_advanced_checkbox.toggled.connect(self._handle_advanced_toggle)
@@ -310,7 +310,7 @@ class SettingsDialog(QDialog):
         self.button_box.accepted.connect(self.accept)
         self.button_box.rejected.connect(self.reject)
         ok_btn = self.button_box.button(QDialogButtonBox.StandardButton.Ok)
-        ok_btn.setText("Save Settings")
+        ok_btn.setText("Сохранить настройки")
         ok_btn.setStyleSheet(
             "background:#2563eb; color:#fff; border-color:#2563eb; min-width:110px;"
             " padding:6px 16px;"
@@ -352,11 +352,11 @@ class SettingsDialog(QDialog):
     def _status_text(self) -> str:
         p = self.profile_settings
         r = self.runtime_settings
-        status = "Calibrated" if p.has_completed_onboarding else "Not calibrated"
-        notif = "on" if r.notifications_enabled else "off"
+        status = "Откалибровано" if p.has_completed_onboarding else "Не откалибровано"
+        notif = "вкл" if r.notifications_enabled else "выкл"
         return (
-            f"Baseline: {p.baseline_posture_score:.0f}%  ·  {status}"
-            f"  ·  Notifications {notif}"
+            f"База: {p.baseline_posture_score:.0f}%  ·  {status}"
+            f"  ·  Уведомления {notif}"
         )
 
     def _build_nav_list(self) -> QListWidget:
@@ -439,7 +439,7 @@ class SettingsDialog(QDialog):
         layout.setSpacing(12)
         layout.addWidget(self._page_header("camera"))
 
-        group = QGroupBox("Capture")
+        group = QGroupBox("Захват")
         form = self._make_form()
 
         self.camera_combo = QComboBox()
@@ -452,16 +452,16 @@ class SettingsDialog(QDialog):
             if idx != -1:
                 self.camera_combo.setCurrentIndex(idx)
         else:
-            self.camera_combo.addItem("No camera found", -1)
+            self.camera_combo.addItem("Камера не найдена", -1)
             self.camera_combo.setEnabled(False)
-        form.addRow("Default camera:", self.camera_combo)
+        form.addRow("Камера по умолчанию::", self.camera_combo)
 
         self.fps_spinbox = QSpinBox()
         self.fps_spinbox.setRange(1, 120)
         self.fps_spinbox.setValue(self.runtime_settings.default_fps)
         self.fps_spinbox.setSuffix(" fps")
         self.fps_spinbox.setMinimumWidth(120)
-        form.addRow("Frame rate:", self.fps_spinbox)
+        form.addRow("Частота кадров:", self.fps_spinbox)
 
         self.width_spinbox = QSpinBox()
         self.width_spinbox.setRange(100, 10000)
@@ -483,13 +483,13 @@ class SettingsDialog(QDialog):
         res_row.addWidget(x_lbl)
         res_row.addWidget(self.height_spinbox)
         res_row.addStretch()
-        form.addRow("Resolution:", res_row)
+        form.addRow("Разрешение:", res_row)
 
         group.setLayout(form)
         layout.addWidget(group)
         layout.addWidget(
             self._help_label(
-                "Higher resolution improves detection accuracy but increases CPU usage."
+                "Более высокое разрешение повышает точность, но увеличивает нагрузку на процессор."
             )
         )
         layout.addStretch()
@@ -503,16 +503,16 @@ class SettingsDialog(QDialog):
         layout.setSpacing(12)
         layout.addWidget(self._page_header("notifications"))
 
-        alerts_group = QGroupBox("Alerts")
+        alerts_group = QGroupBox("Оповещения")
         alerts_form = self._make_form()
 
-        self.notifications_enabled_checkbox = QCheckBox("Enable desktop notifications")
+        self.notifications_enabled_checkbox = QCheckBox("Включить уведомления")
         self.notifications_enabled_checkbox.setChecked(
             self.runtime_settings.notifications_enabled
         )
         alerts_form.addRow(self.notifications_enabled_checkbox)
 
-        self.focus_mode_checkbox = QCheckBox("Pause reminders during focus mode")
+        self.focus_mode_checkbox = QCheckBox("Приостанавливать напоминания в режиме фокуса")
         self.focus_mode_checkbox.setChecked(self.runtime_settings.focus_mode_enabled)
         alerts_form.addRow(self.focus_mode_checkbox)
 
@@ -521,35 +521,35 @@ class SettingsDialog(QDialog):
         self.cooldown_spinbox.setValue(self.runtime_settings.notification_cooldown)
         self.cooldown_spinbox.setSuffix(" sec")
         self.cooldown_spinbox.setMinimumWidth(130)
-        alerts_form.addRow("Cooldown between alerts:", self.cooldown_spinbox)
+        alerts_form.addRow("Задержка между оповещениями:", self.cooldown_spinbox)
 
         self.poor_posture_spinbox = QSpinBox()
         self.poor_posture_spinbox.setRange(10, 100)
         self.poor_posture_spinbox.setValue(self.runtime_settings.poor_posture_threshold)
         self.poor_posture_spinbox.setSuffix("%")
         self.poor_posture_spinbox.setMinimumWidth(100)
-        alerts_form.addRow("Alert threshold:", self.poor_posture_spinbox)
+        alerts_form.addRow("Порог оповещения:", self.poor_posture_spinbox)
 
         self.posture_message_lineedit = QLineEdit()
         self.posture_message_lineedit.setText(
             self.runtime_settings.default_posture_message
         )
         self.posture_message_lineedit.setMinimumWidth(260)
-        self.posture_message_lineedit.setPlaceholderText("e.g. Sit up straight!")
+        self.posture_message_lineedit.setPlaceholderText("например: Выпрямитесь!")
         self.posture_message_lineedit.textChanged.connect(
             self._validate_posture_message
         )
-        alerts_form.addRow("Reminder message:", self.posture_message_lineedit)
+        alerts_form.addRow("Сообшение-напоминание:", self.posture_message_lineedit)
 
         self.posture_message_error = self._error_label()
         alerts_form.addRow("", self.posture_message_error)
 
         alerts_group.setLayout(alerts_form)
 
-        logging_group = QGroupBox("Data Logging")
+        logging_group = QGroupBox("Логирование данных")
         logging_form = self._make_form()
 
-        self.db_logging_checkbox = QCheckBox("Persist session data to database")
+        self.db_logging_checkbox = QCheckBox("Сохранять данные сессии в базу")
         self.db_logging_checkbox.setChecked(
             self.runtime_settings.enable_database_logging
         )
@@ -563,7 +563,7 @@ class SettingsDialog(QDialog):
         )
         self.db_write_interval_spinbox.setSuffix(" sec")
         self.db_write_interval_spinbox.setMinimumWidth(130)
-        logging_form.addRow("Write interval:", self.db_write_interval_spinbox)
+        logging_form.addRow("Интервал записи:", self.db_write_interval_spinbox)
 
         logging_group.setLayout(logging_form)
 
@@ -580,14 +580,14 @@ class SettingsDialog(QDialog):
         layout.setSpacing(12)
         layout.addWidget(self._page_header("tracking"))
 
-        schedule_group = QGroupBox("Tracking Intervals")
+        schedule_group = QGroupBox("Интервалы отслеживания")
         schedule_layout = QVBoxLayout()
         schedule_layout.setContentsMargins(16, 14, 16, 14)
         schedule_layout.setSpacing(10)
 
         self.tracking_table = QTableWidget()
         self.tracking_table.setColumnCount(2)
-        self.tracking_table.setHorizontalHeaderLabels(["Label", "Minutes"])
+        self.tracking_table.setHorizontalHeaderLabels(["Название", "Минуты"])
         self.tracking_table.setMinimumHeight(160)
         self.tracking_table.setAlternatingRowColors(True)
         self.tracking_table.verticalHeader().setVisible(False)
@@ -601,13 +601,13 @@ class SettingsDialog(QDialog):
         add_row = QHBoxLayout()
         add_row.setSpacing(8)
         self.new_interval_label_edit = QLineEdit()
-        self.new_interval_label_edit.setPlaceholderText("Interval label")
+        self.new_interval_label_edit.setPlaceholderText("Название интервала")
         self.new_interval_spinbox = QSpinBox()
         self.new_interval_spinbox.setRange(0, 1440)
         self.new_interval_spinbox.setValue(30)
         self.new_interval_spinbox.setSuffix(" min")
         self.new_interval_spinbox.setFixedWidth(100)
-        self.add_interval_button = QPushButton("Add")
+        self.add_interval_button = QPushButton("Добавить")
         self.add_interval_button.setObjectName("addBtn")
         self.add_interval_button.setFixedWidth(64)
         self.add_interval_button.clicked.connect(self._add_tracking_interval)
@@ -616,7 +616,7 @@ class SettingsDialog(QDialog):
         add_row.addWidget(self.add_interval_button)
         schedule_layout.addLayout(add_row)
 
-        self.remove_interval_button = QPushButton("Remove Selected")
+        self.remove_interval_button = QPushButton("Удалить выбранное")
         self.remove_interval_button.setObjectName("removeBtn")
         self.remove_interval_button.clicked.connect(self._remove_tracking_interval)
         schedule_layout.addWidget(self.remove_interval_button)
@@ -626,7 +626,7 @@ class SettingsDialog(QDialog):
 
         schedule_group.setLayout(schedule_layout)
 
-        duration_group = QGroupBox("Session Duration")
+        duration_group = QGroupBox("Длительность сессии")
         duration_form = self._make_form()
         self.tracking_duration_spinbox = QSpinBox()
         self.tracking_duration_spinbox.setRange(1, 60)
@@ -635,14 +635,14 @@ class SettingsDialog(QDialog):
         )
         self.tracking_duration_spinbox.setSuffix(" min")
         self.tracking_duration_spinbox.setMinimumWidth(110)
-        duration_form.addRow("Duration per session:", self.tracking_duration_spinbox)
+        duration_form.addRow("Длительность одной сессии:", self.tracking_duration_spinbox)
         duration_group.setLayout(duration_form)
 
         layout.addWidget(schedule_group)
         layout.addWidget(
             self._help_label(
-                "Intervals define how often tracking restarts. "
-                "Set minutes to 0 for always-on continuous tracking."
+                "Интервалы определяют, как часто перезапускается отслеживание. "
+                "Установите 0 минут для непрерывного режима."
             )
         )
         layout.addWidget(duration_group)
@@ -657,15 +657,15 @@ class SettingsDialog(QDialog):
         layout.setSpacing(12)
         layout.addWidget(self._page_header("advanced"))
 
-        core_group = QGroupBox("Detection Tuning")
+        core_group = QGroupBox("Настройка детекции")
         core_form = self._make_form()
 
         self.model_complexity_spinbox = QSpinBox()
         self.model_complexity_spinbox.setRange(0, 2)
         self.model_complexity_spinbox.setValue(self.ml_settings.model_complexity)
         self.model_complexity_spinbox.setMinimumWidth(100)
-        self.model_complexity_spinbox.setToolTip("0 = Lite  ·  1 = Full  ·  2 = Heavy")
-        core_form.addRow("Model complexity (0–2):", self.model_complexity_spinbox)
+        self.model_complexity_spinbox.setToolTip("0 = Легкая  ·  1 = Полная  ·  2 = Тяжелая")
+        core_form.addRow("Сложность модели (0–2):", self.model_complexity_spinbox)
 
         self.detection_confidence_spinbox = QDoubleSpinBox()
         self.detection_confidence_spinbox.setRange(0.0, 1.0)
@@ -675,7 +675,7 @@ class SettingsDialog(QDialog):
             self.ml_settings.min_detection_confidence
         )
         self.detection_confidence_spinbox.setMinimumWidth(110)
-        core_form.addRow("Min detection confidence:", self.detection_confidence_spinbox)
+        core_form.addRow("Минимальная уверенность детекции:", self.detection_confidence_spinbox)
 
         self.tracking_confidence_spinbox = QDoubleSpinBox()
         self.tracking_confidence_spinbox.setRange(0.0, 1.0)
@@ -685,32 +685,32 @@ class SettingsDialog(QDialog):
             self.ml_settings.min_tracking_confidence
         )
         self.tracking_confidence_spinbox.setMinimumWidth(110)
-        core_form.addRow("Min tracking confidence:", self.tracking_confidence_spinbox)
+        core_form.addRow("Минимальная уверенность отслеживания:", self.tracking_confidence_spinbox)
 
         self.score_buffer_spinbox = QSpinBox()
         self.score_buffer_spinbox.setRange(10, 10000)
         self.score_buffer_spinbox.setValue(self.ml_settings.score_buffer_size)
         self.score_buffer_spinbox.setSuffix(" frames")
         self.score_buffer_spinbox.setMinimumWidth(140)
-        core_form.addRow("Score buffer size:", self.score_buffer_spinbox)
+        core_form.addRow("Размер буфера оценок:", self.score_buffer_spinbox)
 
         self.score_window_spinbox = QSpinBox()
         self.score_window_spinbox.setRange(1, 100)
         self.score_window_spinbox.setValue(self.ml_settings.score_window_size)
         self.score_window_spinbox.setSuffix(" frames")
         self.score_window_spinbox.setMinimumWidth(140)
-        core_form.addRow("Score window size:", self.score_window_spinbox)
+        core_form.addRow("Размер окна оценок:", self.score_window_spinbox)
 
         self.score_threshold_spinbox = QSpinBox()
         self.score_threshold_spinbox.setRange(0, 100)
         self.score_threshold_spinbox.setValue(self.ml_settings.score_threshold)
         self.score_threshold_spinbox.setSuffix("%")
         self.score_threshold_spinbox.setMinimumWidth(100)
-        core_form.addRow("Score threshold:", self.score_threshold_spinbox)
+        core_form.addRow("Порог оценки:", self.score_threshold_spinbox)
 
         core_group.setLayout(core_form)
 
-        thresholds_group = QGroupBox("Posture Thresholds")
+        thresholds_group = QGroupBox("Пороги осанки")
         thresholds_form = self._make_form()
         self.threshold_spinboxes: Dict[str, QDoubleSpinBox] = {}
         for key, value in self.ml_settings.posture_thresholds.items():
@@ -724,7 +724,7 @@ class SettingsDialog(QDialog):
             self.threshold_spinboxes[key] = spinbox
         thresholds_group.setLayout(thresholds_form)
 
-        weights_group = QGroupBox("Posture Weights")
+        weights_group = QGroupBox("Веса осанки")
         weights_form = self._make_form()
         self.weight_spinboxes: List[QDoubleSpinBox] = []
         for index, weight in enumerate(self.ml_settings.posture_weights, start=1):
@@ -734,7 +734,7 @@ class SettingsDialog(QDialog):
             spinbox.setSingleStep(0.05)
             spinbox.setValue(float(weight))
             spinbox.setMinimumWidth(120)
-            weights_form.addRow(f"Weight {index}:", spinbox)
+            weights_form.addRow(f"Вес {index}:", spinbox)
             self.weight_spinboxes.append(spinbox)
         self.weights_error_label = self._error_label()
         weights_form.addRow("", self.weights_error_label)
@@ -772,7 +772,7 @@ class SettingsDialog(QDialog):
             self._show_error(
                 "tracking_intervals",
                 self.interval_error_label,
-                "Provide a label before adding an interval.",
+                "Укажите название перед добавлением интервала.",
             )
             return
         row = self.tracking_table.rowCount()
@@ -820,14 +820,14 @@ class SettingsDialog(QDialog):
             self._show_error(
                 "posture_message",
                 self.posture_message_error,
-                "Reminder message cannot be empty.",
+                "Текст напоминания не может быть пустым.",
             )
             return False
         if len(message) < 3:
             self._show_error(
                 "posture_message",
                 self.posture_message_error,
-                "Use at least three characters.",
+                "Используйте хотя бы три символа.",
             )
             return False
         self._clear_error("posture_message", self.posture_message_error)
@@ -840,16 +840,16 @@ class SettingsDialog(QDialog):
             minutes_item = self.tracking_table.item(row, 1)
             label = label_item.text().strip() if label_item else ""
             if not label:
-                raise ValueError("Each interval needs a label.")
+                raise ValueError("Для каждого интервала нужно название.")
             try:
                 minutes = int(minutes_item.text()) if minutes_item else 0
             except (TypeError, ValueError):
-                raise ValueError(f"Minutes for '{label}' must be a whole number.")
+                raise ValueError(f"Минуты для '{label}' должны быть целым числом.")
             if minutes < 0:
-                raise ValueError("Minutes cannot be negative.")
+                raise ValueError("Минуты не могут быть отрицательными.")
             intervals[label] = minutes
         if not intervals:
-            raise ValueError("Add at least one tracking interval.")
+            raise ValueError("Добавьте хотя бы один интервал отслеживания.")
         return intervals
 
     def _validate_tracking_intervals(self) -> Optional[Dict[str, int]]:
@@ -869,7 +869,7 @@ class SettingsDialog(QDialog):
             self._show_error(
                 "posture_weights",
                 self.weights_error_label,
-                "At least one posture weight must be greater than zero.",
+                "Хотя бы один вес осанки должен быть больше нуля.",
             )
             return False
         self._clear_error("posture_weights", self.weights_error_label)
@@ -889,7 +889,7 @@ class SettingsDialog(QDialog):
         intervals = self._validate_all()
         if intervals is None:
             QMessageBox.warning(
-                self, "Settings", "Please resolve the highlighted fields before saving."
+                self, "Settings", "Пожалуйста, исправьте выделенные поля перед сохранением."
             )
             return
 
