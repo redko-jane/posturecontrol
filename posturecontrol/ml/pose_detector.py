@@ -54,7 +54,6 @@ class PoseDetector:
         self.score_thresholds: Dict[str, float] = {}
         self.pose = None
         # Cached CLAHE object — creating one per frame is expensive at 30 FPS
-        self._clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8, 8))
         self.reload()
         # Pre-warm MediaPipe so the first real frame isn't delayed by model init.
         # Use a noise frame (not zeros) so MediaPipe does real work — better proxy
@@ -104,34 +103,24 @@ class PoseDetector:
 
     def process_frame(self, frame: np.ndarray) -> Tuple[np.ndarray, float, Any]:
         try:
-            frame = self._preprocess_frame(frame)
-            results = self._detect_pose(frame)
+            processed_frame = cv2.resize(frame, (self.frame_width, self.frame_height))
+            results = self._detect_pose(processed_frame)
             if results.pose_landmarks:
-                # Extract landmark array once — shared by metrics and drawing
                 points = np.array(
                     [[lm.x, lm.y, lm.z] for lm in results.pose_landmarks.landmark]
                 )
                 metrics = self._compute_posture_metrics_from_points(points)
                 posture_score = metrics["posture_score"]
-                self._draw_landmarks(frame, results, points)
-                self._draw_posture_feedback(frame, posture_score)
-                return frame, posture_score, PoseDetectionResult(results, metrics)
-            return frame, 0.0, None
+                self._draw_landmarks(processed_frame, results, points)
+                self._draw_posture_feedback(processed_frame, posture_score)
+                return processed_frame, posture_score, PoseDetectionResult(results, metrics)
+            return processed_frame, 0.0, None
         except (cv2.error, ValueError, np.linalg.LinAlgError) as exc:
-            # Transient per-frame error (image conversion, bad landmark geometry) — skip frame
             logger.warning("Skipping frame due to recoverable error: %s", exc)
             return frame, 0.0, None
-        except Exception:  # noqa: BLE001 - unexpected error; keep loop alive
+        except Exception: 
             logger.exception("Unexpected error processing frame")
             return frame, 0.0, None
-
-    def _preprocess_frame(self, frame: np.ndarray) -> np.ndarray:
-        frame = cv2.resize(frame, (self.frame_width, self.frame_height))
-        lab = cv2.cvtColor(frame, cv2.COLOR_BGR2LAB)
-        l_channel, a, b = cv2.split(lab)
-        l_channel = self._clahe.apply(l_channel)
-        enhanced = cv2.merge([l_channel, a, b])
-        return cv2.cvtColor(enhanced, cv2.COLOR_LAB2BGR)
 
     def _detect_pose(self, frame: np.ndarray) -> Any:
         rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)

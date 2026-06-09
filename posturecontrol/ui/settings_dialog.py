@@ -104,7 +104,7 @@ QGroupBox::title {
     subcontrol-origin: margin;
     subcontrol-position: top left;
     left: 14px;
-    top: -10px;
+    top: 0px;
     padding: 0 6px;
     background: #f0f2f5;
 }
@@ -347,7 +347,7 @@ class SettingsDialog(QDialog):
 
         self._handle_advanced_toggle(False)
 
-    # ── helpers ──────────────────────────────────────────────────────────────
+    # ── helpers ──────────────────────────────────────────────────────────[...]
 
     def _status_text(self) -> str:
         p = self.profile_settings
@@ -429,7 +429,7 @@ class SettingsDialog(QDialog):
         label.setVisible(False)
         return label
 
-    # ── pages ─────────────────────────────────────────────────────────────────
+    # ── pages ────────────────────────────────────────────────────────────[...]
 
     def _create_camera_page(self) -> QWidget:
         container = QWidget()
@@ -802,7 +802,7 @@ class SettingsDialog(QDialog):
             cap.release()
         return available
 
-    # ── validation ────────────────────────────────────────────────────────────
+    # ── validation ─────────────────────────────────────────────────────────[...]
 
     def _show_error(self, key: str, label: QLabel, message: str) -> None:
         self.validation_errors[key] = message
@@ -883,7 +883,7 @@ class SettingsDialog(QDialog):
             return None
         return intervals
 
-    # ── accept ────────────────────────────────────────────────────────────────
+    # ── accept ────────────────────────────────────────────────────────────[...]
 
     def accept(self) -> None:
         intervals = self._validate_all()

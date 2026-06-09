@@ -184,7 +184,7 @@ class PostureDashboard(QDialog):
         # Video feed
         self.video_label = QLabel(self.tr("Ожидание кадров…"))
         self.video_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.video_label.setMinimumSize(560, 320)
+        self.video_label.setMinimumSize(640, 480)
         self.video_label.setSizePolicy(
             QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
         )

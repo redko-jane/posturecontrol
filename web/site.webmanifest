@@ -1,6 +1,6 @@
 {
-  "name": "BatesPosture",
-  "short_name": "BatesPosture",
+  "name": "PostureControl",
+  "short_name": "PostureControl",
   "description": "Free, open-source real-time desktop posture monitor using webcam and MediaPipe. 100% local.",
   "start_url": "/",
   "scope": "/",
